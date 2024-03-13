@@ -1,4 +1,7 @@
+import 'package:fluttapp/home.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MainApp());
@@ -9,7 +12,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: Scaffold(body: MyCustomForm()),
     );
   }
@@ -25,8 +28,6 @@ class MyCustomForm extends StatefulWidget {
 
 class _MyCustomFormState extends State<MyCustomForm> {
   TextEditingController usrController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -35,88 +36,81 @@ class _MyCustomFormState extends State<MyCustomForm> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            Center(
               child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Image.asset('family.png')),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: Text(
-                'Masukkan username dan kata sandi anda!',
-                style: TextStyle(fontSize: 20),
+                padding: const EdgeInsets.all(20),
+                child: Image.asset(
+                  'logo.png',
+                  height: 300,
+                ),
               ),
             ),
+            Container(
+                padding: const EdgeInsets.all(20),
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Hai, Selamat Datang',
+                      style: TextStyle(fontSize: 20, fontFamily: 'Poppins'),
+                    ),
+                    Text(
+                      'Kelola tugas Anda hari ini untuk meningkatkan produktivitas Anda!',
+                      style: TextStyle(fontSize: 15, fontFamily: 'Popmed'),
+                    ),
+                  ],
+                )),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              padding: const EdgeInsets.only(left: 20, right: 20),
               child: TextField(
                 controller: usrController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Username',
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: TextFormField(
-                obscureText: _obscurePassword,
-                controller: passwordController,
                 decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Password',
-                  // suffixIcon: IconButton(
-                  //   icon: Icon(_obscurePassword
-                  //       ? Icons.visibility
-                  //       : Icons.visibility_off),
-                  //   onPressed: () {
-                  //     setState(() {
-                  //       _obscurePassword =
-                  //           !_obscurePassword; // Mengubah kebalikan status
-                  //     });
-                  //   },
-                  // ),
+                  border: UnderlineInputBorder(),
+                  labelText: 'Username',
                 ),
               ),
             ),
             Container(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(20),
               width: double.infinity,
               child: TextButton(
                 style: TextButton.styleFrom(
-                    backgroundColor: Colors.amber,
+                    backgroundColor: const Color.fromARGB(255, 205, 37, 234),
                     foregroundColor: Colors.white),
                 onPressed: () {
                   String username = usrController.text;
-                  String password = passwordController.text;
 
                   if (username.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Username kosong'),
-                      duration: Duration(seconds: 2),
-                    ));
+                    showSnackBar("Username tidak boleh kosong");
+
                     return;
                   }
-
-                  if (password.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Kata sandi kosong'),
-                      duration: Duration(seconds: 2),
-                    ));
-                    return;
-                  }
-
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('username: $username, password: $password'),
-                    duration: Duration(seconds: 2),
-                  ));
+                  navigatorScreen(context, const Home(), username);
                 },
-                child: const Text('Masuk'),
+                child: const Text('Mulai Sekarang'),
               ),
             )
           ],
         ),
       ],
     );
+  }
+
+  void navigatorScreen(BuildContext context, Widget screen, String username) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => screen));
+    saveUserInfo(username);
+  }
+
+  void saveUserInfo(String username) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString("username", username);
+  }
+
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 20),
+    ));
   }
 }

@@ -3,12 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MainApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  String? username = sharedPreferences.getString('username');
+  // Mencetak nilai dari SharedPreferences
+  Widget initialRoute = (username != null) ? Home() : Container();
+  runApp(MainApp(initialRoute: initialRoute));
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({Key? key}) : super(key: key);
+  final Widget initialRoute;
+  const MainApp({required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +89,6 @@ class _MyCustomFormState extends State<MyCustomForm> {
 
                   if (username.isEmpty) {
                     showSnackBar("Username tidak boleh kosong");
-
                     return;
                   }
                   navigatorScreen(context, const Home(), username);

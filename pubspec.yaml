@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   shared_preferences: ^2.2.2
+  sqflite: ^2.3.2
 
 dev_dependencies:
   flutter_test:
@@ -25,4 +26,6 @@ flutter:
     - family: PoppinsMed
       fonts:
         - asset: assets/fonts/popmed.ttf
+  assets:
+    - assets/img/
   uses-material-design: true
